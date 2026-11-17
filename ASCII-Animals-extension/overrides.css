@@ -1,0 +1,46 @@
+/* The animated canvas lives behind the page (z-index -1). */
+#ascii-bg-canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  display: block;
+  opacity: var(--ascii-bg-opacity, 0.35);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* "background" mode: make ChatGPT's own big surfaces transparent so the canvas shows through.
+   If ChatGPT renames its classes and the animals disappear behind a solid colour,
+   this is the only block you need to adjust (or switch the popup to "overlay" mode). */
+html.ascii-bg-on.ascii-bg-mode-background,
+html.ascii-bg-on.ascii-bg-mode-background body {
+  background-color: var(--ascii-bg-page, #212121) !important;
+}
+html.ascii-bg-on.ascii-bg-mode-background body,
+html.ascii-bg-on.ascii-bg-mode-background #__next,
+html.ascii-bg-on.ascii-bg-mode-background main,
+html.ascii-bg-on.ascii-bg-mode-background #page-header,
+html.ascii-bg-on.ascii-bg-mode-background [class*="bg-token-main-surface-primary"]:not(textarea):not(form *):not([role="dialog"] *):not([role="menu"] *):not([data-radix-popper-content-wrapper] *) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+/* Body must not paint over the negative-z canvas. */
+html.ascii-bg-on.ascii-bg-mode-background body { background: transparent !important; }
+
+/* "overlay" mode: canvas sits above everything, blended; works regardless of ChatGPT's CSS. */
+html.ascii-bg-on.ascii-bg-mode-overlay #ascii-bg-canvas {
+  z-index: 2147483000 !important;
+}
+html.ascii-bg-on.ascii-bg-mode-overlay.ascii-bg-dark #ascii-bg-canvas { mix-blend-mode: screen; }
+html.ascii-bg-on.ascii-bg-mode-overlay:not(.ascii-bg-dark) #ascii-bg-canvas { mix-blend-mode: multiply; }
+
+/* Layers found by the scan in content.js (site-independent). html keeps the page colour so the canvas blends with it. */
+html.ascii-bg-on.ascii-bg-mode-background [data-ascii-bg-clear] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+html.ascii-bg-on.ascii-bg-mode-background[data-ascii-bg-clear] {
+  background-color: var(--ascii-bg-page, #212121) !important;
+}
